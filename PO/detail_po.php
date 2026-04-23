@@ -19,12 +19,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 // Validasi parameter ID
-if (!isset($_GET['id']) || empty($_GET['id'])) {
+/* if (!isset($_GET['id']) || empty($_GET['id'])) {
     echo jsonResponse(null, false, 'Parameter ID diperlukan');
+    exit;
+} */
+
+if (!isset($_GET['nomor_po']) || empty($_GET['nomor_po'])) {
+    echo jsonResponse(null, false, 'Parameter Nomor PO diperlukan');
     exit;
 }
 
-$id = $_GET['id'];
+
+$id = $_GET['nomor_po'];
 
 try {
     // Inisialisasi AccurateAPI

@@ -1528,16 +1528,16 @@ class AccurateAPI {
     }
     
     /**
-     * Get purchase order detail berdasarkan ID
-     * @param int $purchaseOrderId ID purchase order
+     * Get purchase order detail berdasarkan Nomor PO
+     * @param string $purchaseOrderNumber Nomor purchase order
      * @return array Response dari API
      */
-    public function getPurchaseOrderDetail($purchaseOrderId) {
+    public function getPurchaseOrderDetail($purchaseOrderNumber) {
         // Validasi ID purchase order
-        if (empty($purchaseOrderId)) {
+        if (empty($purchaseOrderNumber)) {
             return [
                 'success' => false,
-                'message' => 'Purchase order ID is required',
+                'message' => 'Purchase order ID / Number PO is required',
                 'data' => null
             ];
         }
@@ -1545,7 +1545,7 @@ class AccurateAPI {
         $url = $this->host . '/accurate/api/purchase-order/detail.do';
         
         $params = [
-            'id' => $purchaseOrderId
+            'number' => $purchaseOrderNumber
         ];
         
         $url .= '?' . http_build_query($params);

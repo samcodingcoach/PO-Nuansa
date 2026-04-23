@@ -159,8 +159,8 @@ class AccurateAPI {
             'success' => $success,
             'http_code' => $httpCode,
             'data' => $decodedResponse,
-            'error' => $errorMessage,
-            'raw_response' => $response
+            'error' => $errorMessage
+           // 'raw_response' => $response
         ];
     }
     
@@ -402,21 +402,26 @@ class AccurateAPI {
      * @param array $params Parameter tambahan untuk query
      * @return array Response dari API
      */
+    /**
+ * Get purchase order list dari Accurate API secara dinamis
+ * @param array $params Parameter tambahan untuk query (termasuk filter vendor)
+ * @return array Response dari API
+ */
     public function getPurchaseOrderList($params = []) {
         $url = $this->host . '/accurate/api/purchase-order/list.do';
         
-        // Default parameters
+        // Default parameters jika tidak dikirimkan dari luar
         $defaultParams = [
             'sp.page' => 1,
             'sp.pageSize' => 200,
             'fields' => 'id,number,transDate,dueDate,totalAmount,status,statusName,vendor,vendor.name',
-            'filter.vendorNo' => '00-BJM-00063'
         ];
         
-        // Merge dengan params yang diberikan
-        $params = array_merge($defaultParams, $params);
+        // Merge params: Nilai dalam $params akan menimpa $defaultParams jika kuncinya sama
+        $finalParams = array_merge($defaultParams, $params);
         
-        $url .= '?' . http_build_query($params);
+        // Susun URL dengan query string yang sudah dinamis
+        $url .= '?' . http_build_query($finalParams);
         
         return $this->makeRequest($url, 'GET');
     }

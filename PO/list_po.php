@@ -23,15 +23,33 @@ try {
     // Inisialisasi AccurateAPI
     $api = new AccurateAPI();
     
-    // Dapatkan data purchase order list dari API
-    $result = $api->getPurchaseOrderList();
+    // Siapkan filter dinamis dari parameter GET (misal: list_po.php?vendorNo=00-BJM-00063)
+    $extraParams = [];
+    if (isset($_GET['vendorNo']) && !empty($_GET['vendorNo'])) {
+        $extraParams['filter.vendorNo'] = $_GET['vendorNo'];
+    }
+
+    // Jika ingin menambah filter lain secara dinamis via URL, bisa tambahkan di sini
+    if (isset($_GET['page'])) {
+        $extraParams['sp.page'] = $_GET['page'];
+    }
+    
+    // Panggil fungsi dengan parameter yang sudah disiapkan
+    $result = $api->getPurchaseOrderList($extraParams);
     
     if ($result['success']) {
         echo json_encode($result, JSON_PRETTY_PRINT);
     } else {
-        echo jsonResponse(null, false, $result['message'] ?? 'Failed to fetch purchase order data');
+        // Menggunakan kunci 'error' sesuai struktur di makeRequest
+        echo json_encode([
+            'success' => false,
+            'message' => $result['error'] ?? 'Failed to fetch purchase order data'
+        ], JSON_PRETTY_PRINT);
     }
 } catch (Exception $e) {
-    echo jsonResponse(null, false, 'Error: ' . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
+    ], JSON_PRETTY_PRINT);
 }
 ?>

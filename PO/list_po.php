@@ -18,12 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
+if (!isset($_GET['vendorNo']) || empty($_GET['vendorNo'])) {
+    echo jsonResponse(null, false, 'Parameter Vendor Number diperlukan');
+    exit;
+}
+
 try {
     // Inisialisasi AccurateAPI
     $api = new AccurateAPI();
     
     // Dapatkan data purchase order list dari API
-    $result = $api->getPurchaseOrderList();
+    $result = $api->getPurchaseOrderList($_GET['vendorNo']);
     
     if ($result['success']) {
         echo json_encode($result, JSON_PRETTY_PRINT);

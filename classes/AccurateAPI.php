@@ -397,43 +397,30 @@ class AccurateAPI {
         return $this->makeRequest($url, 'GET');
     }
 
-    /**
+     /**
      * Get purchase order list dari Accurate API
-     * @param string $params Parameter tambahan untuk query
+     * @param array $params Parameter tambahan untuk query
      * @return array Response dari API
      */
-    public function getPurchaseOrderList($vendorNo) {
-
-        if (empty($vendorNo)) {
-            return [
-                'success' => false,
-                'message' => 'Vendor Number is required',
-                'data' => null
-            ];
-        }
-
+    public function getPurchaseOrderList($params = []) {
         $url = $this->host . '/accurate/api/purchase-order/list.do';
         
         // Default parameters
         $defaultParams = [
             'sp.page' => 1,
-            'sp.pageSize' => 10,
-            'fields' => 'id,number,transDate,dueDate,totalAmount,status,statusName,vendor,vendor.name,vendor.id'
-        ];
-
-        $params = [
-            'vendorNo' => $vendorNo
+            'sp.pageSize' => 200,
+            'fields' => 'id,number,transDate,dueDate,totalAmount,status,statusName,vendor,vendor.name',
+            'filter.vendorNo' => '00-BJM-00063'
         ];
         
         // Merge dengan params yang diberikan
-        // $params = array_merge($defaultParams, $params);
-
-      
+        $params = array_merge($defaultParams, $params);
         
-        $url .= '?' . http_build_query($defaultParams) . '&' . http_build_query($params);
+        $url .= '?' . http_build_query($params);
         
         return $this->makeRequest($url, 'GET');
     }
+
     
     /**
      * Get purchase order detail berdasarkan Nomor PO

@@ -362,5 +362,57 @@ class AccurateAPI {
         
         return $this->makeRequest($url, 'GET');
     }
+
+    public function getVendorList($params = array(), $pageSize = null) {
+        $url = $this->host . '/accurate/api/vendor/list.do';
+        
+        // Parameter default menggunakan array()
+        $defaultParams = array(
+            'sp.pageSize' => 25,
+            'sp.page' => 1,
+            'fields' => 'id,name,no,email,mobilePhone,phone,balanceList,category'
+        );
+        
+        // Handle backward compatibility - jika params adalah integer (page number)
+        if (is_int($params) && $pageSize !== null) {
+            $params = array(
+                'sp.page' => $params,
+                'sp.pageSize' => $pageSize
+            );
+        } elseif (!is_array($params)) {
+            $params = array();
+        }
+        
+        // Merge dengan parameter yang diberikan
+        $queryParams = array_merge($defaultParams, $params);
+        
+        // Build URL dengan query parameters
+        if (!empty($queryParams)) {
+            $url .= '?' . http_build_query($queryParams);
+        }
+        
+        return $this->makeRequest($url, 'GET');
+    }
+
+    
+    public function getVendorDetail($id) {
+    if (empty($id)) {
+        return array(
+            'success' => false,
+            'message' => 'ID Vendor tidak boleh kosong'
+        );
+    }
+    
+    // Endpoint Accurate untuk detail vendor
+    $url = $this->host . '/accurate/api/vendor/detail.do';
+    
+    // Parameter yang dikirim ke Accurate biasanya menggunakan key 'id'
+    $params = array('id' => $id);
+    $url .= '?' . http_build_query($params);
+    
+    return $this->makeRequest($url, 'GET');
+    }
+
+
 }
 ?>

@@ -1,13 +1,14 @@
 <?php
 /**
  * Class AccurateAPI untuk handle semua API calls ke Accurate
- * Menggabungkan semua fungsi API dalam satu class yang terorganisir
+ * Versi Kompatibel: PHP 5.6
  */
 
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../utils/utils.php';
 
 class AccurateAPI {
+    // PHP 5.6 tidak mendukung type hinting pada properti
     private $accessToken;
     private $sessionId;
     private $host;
@@ -34,66 +35,48 @@ class AccurateAPI {
         $this->host = $newHost;
     }
     
-    /**
-     * Get current session ID
-     * @return string Current session ID
-     */
     public function getSessionId() {
         return $this->sessionId;
     }
     
-    /**
-     * Get current access token
-     * @return string Current access token
-     */
     public function getCurrentAccessToken() {
         return $this->accessToken;
     }
     
-    /**
-     * Get base URL for API calls
-     * @return string Base URL
-     */
     public function getBaseUrl() {
         return $this->host;
     }
     
-    /**
-     * Make HTTP request to Accurate API
-     * @param string $url URL endpoint
-     * @param string $method HTTP method (GET, POST, PUT, DELETE)
-     * @param mixed $data Request data
-     * @param array $headers Additional headers
-     * @return array Response array with success, http_code, data, error
-     */
-    private function makeRequest($url, $method = 'GET', $data = null, $headers = []) {
+    private function makeRequest($url, $method = 'GET', $data = null, $headers = array()) {
         $ch = curl_init();
         
-        curl_setopt_array($ch, [
+        $options = array(
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_USERAGENT => 'Nuansa Accurate API Client/1.0'
-        ]);
+        );
         
-        $defaultHeaders = [
+        curl_setopt_array($ch, $options);
+        
+        $defaultHeaders = array(
             "Accept: application/json"
-        ];
+        );
 
-        // Only add Auth and Session headers for non-OAuth requests
         if (strpos($url, '/oauth/token') === false) {
-            $defaultHeaders[] = "Authorization: Bearer {$this->accessToken}";
+            $defaultHeaders[] = "Authorization: Bearer " . $this->accessToken;
             if ($this->sessionId) {
-                $defaultHeaders[] = "X-Session-ID: {$this->sessionId}";
+                $defaultHeaders[] = "X-Session-ID: " . $this->sessionId;
             }
         }
         
         $allHeaders = array_merge($defaultHeaders, $headers);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $allHeaders);
         
-        switch (strtoupper($method)) {
+        $method = strtoupper($method);
+        switch ($method) {
             case 'POST':
                 curl_setopt($ch, CURLOPT_POST, true);
                 if ($data) {
@@ -128,12 +111,12 @@ class AccurateAPI {
         curl_close($ch);
         
         if ($error) {
-            logError("cURL Error: $error", __FILE__, __LINE__);
-            return ['success' => false, 'http_code' => 0, 'data' => null, 'error' => $error];
+            logError("cURL Error: " . $error, __FILE__, __LINE__);
+            return array('success' => false, 'http_code' => 0, 'data' => null, 'error' => $error);
         }
         
         $decodedResponse = json_decode($response, true);
-        $success = $httpCode >= 200 && $httpCode < 300;
+        $success = ($httpCode >= 200 && $httpCode < 300);
         
         if ($success && is_array($decodedResponse)) {
             if (isset($decodedResponse['s']) && $decodedResponse['s'] === false) {
@@ -150,24 +133,19 @@ class AccurateAPI {
             } elseif (is_array($decodedResponse) && isset($decodedResponse['message'])) {
                 $errorMessage = $decodedResponse['message'];
             } else {
-                $errorMessage = "HTTP $httpCode error";
+                $errorMessage = "HTTP " . $httpCode . " error";
             }
-            logError("API Error: $errorMessage (HTTP $httpCode) - URL: $url", __FILE__, __LINE__);
+            logError("API Error: " . $errorMessage . " (HTTP " . $httpCode . ") - URL: " . $url, __FILE__, __LINE__);
         }
         
-        return [
+        return array(
             'success' => $success,
             'http_code' => $httpCode,
             'data' => $decodedResponse,
             'error' => $errorMessage
-           // 'raw_response' => $response
-        ];
+        );
     }
     
-    /**
-     * Get session information including database details
-     * @return array Session information
-     */
     public function getSessionInfo() {
         $databaseInfo = null;
         $databaseList = $this->getDatabaseList();
@@ -185,45 +163,38 @@ class AccurateAPI {
                 $databaseInfo = end($databaseList['data']['d']);
             }
         }
-        return [
+        
+        // PHP 5.6: Menggunakan isset() sebagai pengganti Null Coalescing (??)
+        return array(
             'access_token' => $this->accessToken,
             'session_id' => $this->sessionId,
             'host' => $this->host,
             'database_id' => $this->databaseId,
             'database_info' => $databaseInfo,
-            'database_alias' => $databaseInfo['alias'] ?? 'Unknown Database',
-            'database_expired' => $databaseInfo['expired'] ?? true,
-            'database_trial_end' => $databaseInfo['trialEnd'] ?? 'Unknown'
-        ];
+            'database_alias' => isset($databaseInfo['alias']) ? $databaseInfo['alias'] : 'Unknown Database',
+            'database_expired' => isset($databaseInfo['expired']) ? $databaseInfo['expired'] : true,
+            'database_trial_end' => isset($databaseInfo['trialEnd']) ? $databaseInfo['trialEnd'] : 'Unknown'
+        );
     }
 
-    /**
-     * Get access token from Accurate OAuth
-     * @param string $authCode Authorization code
-     * @return array Response from token endpoint
-     */
     public function getAccessToken($authCode) {
         $url = $this->authHost . '/oauth/token';
-        
-        $data = [
+        $data = array(
             'grant_type' => 'authorization_code',
             'code' => $authCode,
             'redirect_uri' => OAUTH_REDIRECT_URI
-        ];
-        
-        $headers = [
+        );
+        $headers = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: Basic ' . base64_encode(OAUTH_CLIENT_ID . ':' . OAUTH_CLIENT_SECRET)
-        ];
+        );
         
         $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($data),
-            CURLOPT_HTTPHEADER => $headers
-        ]);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -231,48 +202,43 @@ class AccurateAPI {
         curl_close($ch);
 
         if ($error) {
-            logError("cURL Error in getAccessToken: $error", __FILE__, __LINE__);
-            return ['success' => false, 'http_code' => 0, 'data' => null, 'error' => $error];
+            return array('success' => false, 'http_code' => 0, 'data' => null, 'error' => $error);
         }
 
         $decodedResponse = json_decode($response, true);
-        $success = $httpCode >= 200 && $httpCode < 300;
+        $success = ($httpCode >= 200 && $httpCode < 300);
 
-        return [
+        $err_msg = null;
+        if (!$success && is_array($decodedResponse)) {
+            $err_msg = isset($decodedResponse['error_description']) ? $decodedResponse['error_description'] : (isset($decodedResponse['error']) ? $decodedResponse['error'] : 'Unknown error');
+        }
+
+        return array(
             'success' => $success,
             'http_code' => $httpCode,
             'data' => $decodedResponse,
-            'error' => $success ? null : ($decodedResponse['error_description'] ?? $decodedResponse['error'] ?? 'Unknown error'),
+            'error' => $err_msg,
             'raw_response' => $response
-        ];
+        );
     }
 
-    /**
-     * Refresh access token
-     * @param string $refreshToken Refresh token
-     * @return array Response from token endpoint
-     */
     public function refreshToken($refreshToken) {
         $url = $this->authHost . '/oauth/token';
-        
-        $data = [
+        $data = array(
             'grant_type' => 'refresh_token',
             'refresh_token' => $refreshToken
-        ];
-        
-        $headers = [
+        );
+        $headers = array(
             'Content-Type: application/x-www-form-urlencoded',
             'Authorization: Basic ' . base64_encode(OAUTH_CLIENT_ID . ':' . OAUTH_CLIENT_SECRET)
-        ];
+        );
         
         $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query($data),
-            CURLOPT_HTTPHEADER => $headers
-        ]);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -280,27 +246,26 @@ class AccurateAPI {
         curl_close($ch);
 
         if ($error) {
-            logError("cURL Error in refreshToken: $error", __FILE__, __LINE__);
-            return ['success' => false, 'http_code' => 0, 'data' => null, 'error' => $error];
+            return array('success' => false, 'http_code' => 0, 'data' => null, 'error' => $error);
         }
 
         $decodedResponse = json_decode($response, true);
-        $success = $httpCode >= 200 && $httpCode < 300;
+        $success = ($httpCode >= 200 && $httpCode < 300);
 
-        return [
+        $err_msg = null;
+        if (!$success && is_array($decodedResponse)) {
+            $err_msg = isset($decodedResponse['error_description']) ? $decodedResponse['error_description'] : (isset($decodedResponse['error']) ? $decodedResponse['error'] : 'Unknown error');
+        }
+
+        return array(
             'success' => $success,
             'http_code' => $httpCode,
             'data' => $decodedResponse,
-            'error' => $success ? null : ($decodedResponse['error_description'] ?? $decodedResponse['error'] ?? 'Unknown error'),
+            'error' => $err_msg,
             'raw_response' => $response
-        ];
+        );
     }
 
-    /**
-     * Update config.php with new token data
-     * @param array $tokenData Token data from OAuth response
-     * @return bool Success status
-     */
     public function updateConfigWithNewToken($tokenData) {
         if (!isset($tokenData['access_token'])) {
             return false;
@@ -309,18 +274,16 @@ class AccurateAPI {
         $configPath = __DIR__ . '/../config/config.php';
         $configContent = file_get_contents($configPath);
         
-        // Update access token
         $configContent = preg_replace(
             "/define\('ACCURATE_ACCESS_TOKEN',\s*'[^']*'\);/",
-            "define('ACCURATE_ACCESS_TOKEN', '{$tokenData['access_token']}');",
+            "define('ACCURATE_ACCESS_TOKEN', '" . $tokenData['access_token'] . "');",
             $configContent
         );
         
-        // Update refresh token if available
         if (isset($tokenData['refresh_token'])) {
             $configContent = preg_replace(
                 "/define\('ACCURATE_REFRESH_TOKEN',\s*'[^']*'\);/",
-                "define('ACCURATE_REFRESH_TOKEN', '{$tokenData['refresh_token']}');",
+                "define('ACCURATE_REFRESH_TOKEN', '" . $tokenData['refresh_token'] . "');",
                 $configContent
             );
         }
@@ -328,131 +291,76 @@ class AccurateAPI {
         return file_put_contents($configPath, $configContent) !== false;
     }
 
-    /**
-     * Get list of databases
-     * @return array Response from API
-     */
     public function getDatabaseList() {
         $url = 'https://account.accurate.id/api/db-list.do';
         return $this->makeRequest($url);
     }
 
-    /**
-     * Close current session
-     * @return array Response from API
-     */
     public function closeSession() {
         $url = $this->host . '/accurate/api/close-session.do';
         return $this->makeRequest($url, 'POST');
     }
 
-    /**
-     * Open new session
-     * @return array Response from API
-     */
     public function openSession() {
         $url = $this->host . '/accurate/api/open-session.do';
         return $this->makeRequest($url, 'POST');
     }
-    /**
-     * Open database
-     * @param int $databaseId Database ID to open
-     * @return array Response from API
-     */
+
     public function openDatabase($databaseId = null) {
-        // Gunakan database ID dari parameter atau default
         if (empty($databaseId)) {
             $databaseId = $this->databaseId;
         }
         
         if (empty($databaseId)) {
-            return [
+            return array(
                 'success' => false,
                 'error' => 'Database ID is required',
                 'http_code' => 400,
                 'data' => null
-            ];
+            );
         }
         
-        // Gunakan endpoint yang benar dari dokumentasi (GET dengan URL parameter)
         $url = 'https://account.accurate.id/api/open-db.do?id=' . $databaseId;
-        
         return $this->makeRequest($url, 'GET');
     }
 
-
-    /**
-     * Helper method for GET requests
-     * @param string $endpoint API endpoint
-     * @param array $params Query parameters
-     * @return array Response from API
-     */
-    private function makeGetRequest($endpoint, $params = []) {
+    private function makeGetRequest($endpoint, $params = array()) {
         $url = $this->host . $endpoint;
-        
         if (!empty($params)) {
             $url .= '?' . http_build_query($params);
         }
-        
         return $this->makeRequest($url, 'GET');
     }
 
-     /**
-     * Get purchase order list dari Accurate API
-     * @param array $params Parameter tambahan untuk query
-     * @return array Response dari API
-     */
-    /**
- * Get purchase order list dari Accurate API secara dinamis
- * @param array $params Parameter tambahan untuk query (termasuk filter vendor)
- * @return array Response dari API
- */
-    public function getPurchaseOrderList($params = []) {
+    public function getPurchaseOrderList($params = array()) {
         $url = $this->host . '/accurate/api/purchase-order/list.do';
         
-        // Default parameters jika tidak dikirimkan dari luar
-        $defaultParams = [
+        $defaultParams = array(
             'sp.page' => 1,
             'sp.pageSize' => 200,
             'fields' => 'id,number,transDate,dueDate,totalAmount,status,statusName,vendor,vendor.name',
-        ];
+        );
         
-        // Merge params: Nilai dalam $params akan menimpa $defaultParams jika kuncinya sama
         $finalParams = array_merge($defaultParams, $params);
-        
-        // Susun URL dengan query string yang sudah dinamis
         $url .= '?' . http_build_query($finalParams);
         
         return $this->makeRequest($url, 'GET');
     }
 
-    
-    /**
-     * Get purchase order detail berdasarkan Nomor PO
-     * @param string $purchaseOrderNumber Nomor purchase order
-     * @return array Response dari API
-     */
     public function getPurchaseOrderDetail($purchaseOrderNumber) {
-        // Validasi ID purchase order
         if (empty($purchaseOrderNumber)) {
-            return [
+            return array(
                 'success' => false,
                 'message' => 'Purchase order ID / Number PO is required',
                 'data' => null
-            ];
+            );
         }
         
         $url = $this->host . '/accurate/api/purchase-order/detail.do';
-        
-        $params = [
-            'number' => $purchaseOrderNumber
-        ];
-        
+        $params = array('number' => $purchaseOrderNumber);
         $url .= '?' . http_build_query($params);
         
         return $this->makeRequest($url, 'GET');
     }
-
 }
-
 ?>

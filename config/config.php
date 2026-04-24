@@ -1,7 +1,7 @@
 <?php
 /**
  * Konfigurasi terpusat untuk aplikasi Accurate API
- * File ini berisi semua konfigurasi yang dibutuhkan aplikasi
+ * Versi Kompatibel: PHP 5.6
  */
 
 // Konfigurasi OAuth
@@ -26,7 +26,10 @@ define('DEFAULT_TIMEZONE', 'Asia/Jakarta');
 // Set timezone default
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
-// Konfigurasi error reporting untuk development
+/**
+ * Konfigurasi error reporting untuk development di PHP 5.6
+ * Pastikan display_errors tetap 1 selama masa transisi 2 folder XAMPP
+ */
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);

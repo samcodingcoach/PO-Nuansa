@@ -1,10 +1,8 @@
 <?php
 /**
  * API untuk mendapatkan list purchase order dalam format JSON
+ * Versi Kompatibel: PHP 5.6
  * File: /purchaseorder/list_po.php
- * HTTP Method: GET
- * Scope: purchase_order_view
- * Endpoint: /list.do
  */
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -18,18 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit;
 }
 
-
 try {
-    // Inisialisasi AccurateAPI
+    // Inisialisasi AccurateAPI (Versi 5.6)
     $api = new AccurateAPI();
     
-    // Siapkan filter dinamis dari parameter GET (misal: list_po.php?vendorNo=00-BJM-00063)
-    $extraParams = [];
+    // Siapkan filter dinamis (Menggunakan array() untuk kompatibilitas 5.6)
+    $extraParams = array();
     if (isset($_GET['vendorNo']) && !empty($_GET['vendorNo'])) {
         $extraParams['filter.vendorNo'] = $_GET['vendorNo'];
     }
 
-    // Jika ingin menambah filter lain secara dinamis via URL, bisa tambahkan di sini
     if (isset($_GET['page'])) {
         $extraParams['sp.page'] = $_GET['page'];
     }
@@ -38,18 +34,27 @@ try {
     $result = $api->getPurchaseOrderList($extraParams);
     
     if ($result['success']) {
+        // Meniadakan raw_response agar output JSON bersih
+        if (isset($result['raw_response'])) {
+            unset($result['raw_response']);
+        }
         echo json_encode($result, JSON_PRETTY_PRINT);
     } else {
-        // Menggunakan kunci 'error' sesuai struktur di makeRequest
-        echo json_encode([
+        // PHP 5.6: Mengganti Null Coalescing (??) dengan isset ternary
+        $errorMessage = isset($result['error']) ? $result['error'] : 'Failed to fetch purchase order data';
+        
+        $errorResponse = array(
             'success' => false,
-            'message' => $result['error'] ?? 'Failed to fetch purchase order data'
-        ], JSON_PRETTY_PRINT);
+            'message' => $errorMessage
+        );
+        echo json_encode($errorResponse, JSON_PRETTY_PRINT);
     }
 } catch (Exception $e) {
-    echo json_encode([
+    // PHP 5.6: Menggunakan array() secara eksplisit
+    $exceptionResponse = array(
         'success' => false,
         'message' => 'Error: ' . $e->getMessage()
-    ], JSON_PRETTY_PRINT);
+    );
+    echo json_encode($exceptionResponse, JSON_PRETTY_PRINT);
 }
 ?>

@@ -1,2 +1,6 @@
 2026-04-24 09:46:27 - ERROR: API Error: Pesanan Pembelian tidak tepat (HTTP 200) - URL: https://odin.accurate.id/accurate/api/purchase-order/detail.do?number=00-BJM-00080 in C:\xampp56\htdocs\Nuansa1\classes\AccurateAPI.php on line 138
 2026-04-24 14:28:18 - ERROR: API Error: Pemasok tidak tepat (HTTP 200) - URL: https://odin.accurate.id/accurate/api/vendor/detail.do?number=1615 in C:\xampp56\htdocs\Nuansa1\classes\AccurateAPI.php on line 138
+2026-04-25 09:58:27 - ERROR: API Error: Pemasok tidak tepat (HTTP 200) - URL: https://odin.accurate.id/accurate/api/vendor/detail.do?number=00-BJM-00063 in C:\xampp56\htdocs\Nuansa1\classes\AccurateAPI.php on line 138
+2026-04-25 10:00:26 - ERROR: API Error: Pemasok tidak tepat (HTTP 200) - URL: https://odin.accurate.id/accurate/api/vendor/detail.do?number=00-SMD-000107 in C:\xampp56\htdocs\Nuansa1\classes\AccurateAPI.php on line 138
+2026-04-25 10:03:11 - ERROR: API Error: Pemasok tidak tepat (HTTP 200) - URL: https://odin.accurate.id/accurate/api/vendor/detail.do?number=00-BJM-00063 in C:\xampp56\htdocs\Nuansa1\classes\AccurateAPI.php on line 138
+2026-04-25 10:04:21 - ERROR: API Error: Pemasok tidak tepat (HTTP 200) - URL: https://odin.accurate.id/accurate/api/vendor/detail.do?number=00-BJM-00063 in C:\xampp56\htdocs\Nuansa1\classes\AccurateAPI.php on line 138

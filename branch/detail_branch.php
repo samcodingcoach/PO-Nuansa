@@ -36,13 +36,12 @@ try {
     $branchResponse = $api->getBranchDetail($branchId);
 
     if ($branchResponse['success'] && isset($branchResponse['data'])) {
-        // Cek apakah response berhasil berdasarkan field 's' (success flag dari Accurate)
         if (isset($branchResponse['data']['s']) && $branchResponse['data']['s'] === true) {
-            // Jika berhasil, data ada di 'd'
             if (isset($branchResponse['data']['d'])) {
+                // KITA UBAH DISINI: Langsung kirim isi 'd' sebagai 'data'
                 $successResponse = array(
                     'success' => true,
-                    'data' => $branchResponse['data']
+                    'data' => $branchResponse['data']['d'] 
                 );
                 echo json_encode($successResponse);
                 exit;

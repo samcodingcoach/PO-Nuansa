@@ -358,24 +358,25 @@ class AccurateAPI {
         return $this->makeRequest($url, 'GET');
     }
 
+    
+
     /**
-     * Get detail branch berdasarkan ID
-     * Versi Kompatibel: PHP 5.6
-     * @param int $id ID dari branch
-     * @return array Response dari API
-     */
-    public function getBranchDetail($id) {
-        $url = $this->host . '/accurate/api/branch/detail.do';
-        
-        // Menggunakan array() bukan []
-        $params = array(
-            'id' => $id
-        );
-        
-        $url .= '?' . http_build_query($params);
-        
-        return $this->makeRequest($url, 'GET');
-    }
+ * Get detail branch berdasarkan ID
+ * Versi Kompatibel: PHP 5.6
+ */
+public function getBranchDetail($id) {
+    // Gunakan endpoint detail.do sesuai dokumentasi Accurate
+    $url = $this->host . '/accurate/api/branch/detail.do';
+    
+    $params = array(
+        'id' => $id
+    );
+    
+    $url .= '?' . http_build_query($params);
+    
+    // Pastikan makeRequest mengembalikan array yang berisi ['data']['d']
+    return $this->makeRequest($url, 'GET');
+}
 
     public function getPurchaseOrderList($params = array()) {
         $url = $this->host . '/accurate/api/purchase-order/list.do';

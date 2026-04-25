@@ -332,6 +332,51 @@ class AccurateAPI {
         return $this->makeRequest($url, 'GET');
     }
 
+    /**
+     * Get list cabang/branch dari Accurate API
+     * Versi Kompatibel: PHP 5.6
+     * @param array $params Parameter tambahan untuk query
+     * @return array Response dari API
+     */
+    public function getBranchList($params = array()) {
+        $url = $this->host . '/accurate/api/branch/list.do';
+        
+        // Parameter default menggunakan array()
+        $defaultParams = array(
+            'sp.pageSize' => 25,
+            'sp.page' => 1
+        );
+        
+        // Merge dengan parameter yang diberikan
+        $queryParams = array_merge($defaultParams, $params);
+        
+        // Build URL dengan query parameters
+        if (!empty($queryParams)) {
+            $url .= '?' . http_build_query($queryParams);
+        }
+        
+        return $this->makeRequest($url, 'GET');
+    }
+
+    /**
+     * Get detail branch berdasarkan ID
+     * Versi Kompatibel: PHP 5.6
+     * @param int $id ID dari branch
+     * @return array Response dari API
+     */
+    public function getBranchDetail($id) {
+        $url = $this->host . '/accurate/api/branch/detail.do';
+        
+        // Menggunakan array() bukan []
+        $params = array(
+            'id' => $id
+        );
+        
+        $url .= '?' . http_build_query($params);
+        
+        return $this->makeRequest($url, 'GET');
+    }
+
     public function getPurchaseOrderList($params = array()) {
         $url = $this->host . '/accurate/api/purchase-order/list.do';
         

@@ -125,7 +125,7 @@ function bar128($text) {
                 <td style="width:50%; border: 2px solid black; padding:8px; vertical-align:top;">
                     <table width="100%">
                         <tr>
-                            <td width="20%">TOKO:</td>
+                            <td width="25%">TOKO:</td>
                             <td>
                                 <strong><?php echo isset($dataBranch['name']) ? $dataBranch['name'] : '-'; ?></strong>
                             </td>
@@ -137,6 +137,31 @@ function bar128($text) {
                         <tr>
                             <td><br>SHIP TO:</td>
                             <td><br><?php echo isset($dataPO['toAddress']) ? $dataPO['toAddress'] : '-'; ?></td>
+                        </tr>
+                        
+                        <tr style="vertical-align:top;">
+                            <td>
+                                <?php 
+                                // Cek apakah ada data nama ekspedisi
+                                if (isset($dataPO['shipment']['name']) && trim($dataPO['shipment']['name']) !== '') {
+                                    echo '<br>EKSPEDISI:';
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <br>
+                                <?php 
+                                    if (isset($dataPO['shipment']['name'])) {
+                                        // Menampilkan Nama Ekspedisi (misal: Sandi Cargo)
+                                        echo "<strong>" . $dataPO['shipment']['name'] . "</strong><br>";
+                                        
+                                        // Menampilkan Alamat Ekspedisi (shipAddress)
+                                        if (isset($dataPO['shipment']['shipAddress'])) {
+                                            echo nl2br($dataPO['shipment']['shipAddress']);
+                                        }
+                                    }
+                                ?>
+                            </td>
                         </tr>
                     </table>
                 </td>

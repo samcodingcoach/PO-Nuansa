@@ -165,7 +165,7 @@ function bar128($text) {
                     <td align="center" style="padding: 10px 0;">
                         <?php 
                         $upc = isset($item['item']['upcNo']) ? trim($item['item']['upcNo']) : '';
-                        if ($upc != '') { echo bar128($upc); echo "<br><span style='font-size:8px;'>$upc</span>"; } else { echo "-"; }
+                        if ($upc != '') { echo bar128($upc); } else { echo "-"; }
                         ?>
                     </td>
                 </tr>

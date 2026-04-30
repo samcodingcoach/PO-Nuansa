@@ -89,9 +89,9 @@ function bar128($text) {
         <tr>
             <td rowspan="4" width="220"><img src="images/Nuansa.jpg" width="200" height="75" /></td>
             <td rowspan="2" style="font-weight:bold; font-size:18px;">PURCHASE ORDER</td>
-            <td width="100">Tanggal PO:</td>
-            <td width="100">Tanggal Kirim:</td>
-            <td width="100">Tanggal Exp:</td>
+            <td width="100">Tanggal PO :</td>
+            <td width="100">Tanggal Kirim :</td>
+            <td width="100">Tanggal Exp :</td>
         </tr>
         <tr>
             <td><?php echo isset($dataPO['transDate']) ? $dataPO['transDate'] : '-'; ?></td>
@@ -108,8 +108,8 @@ function bar128($text) {
         <tr>
             <td rowspan="2">RE-PRINT</td>
             <td rowspan="2" valign="middle"><?php if(!empty($dataPO['number'])) echo bar128($dataPO['number']); ?></td>
-            <td>NO. PO:</td>
-            <td>T.O.P:</td>
+            <td>NO. PO :</td>
+            <td>T.O.P :</td>
         </tr>
         <tr>
             <td><strong><?php echo isset($dataPO['number']) ? $dataPO['number'] : '-'; ?></strong></td>
@@ -140,13 +140,16 @@ function bar128($text) {
             </td>
             <td width="50%" valign="top" style="padding:8px;">
                 <table width="100%">
-                    <tr><td width="25%">TOKO:</td><td><strong><?php echo isset($dataBranch['name']) ? $dataBranch['name'] : '-'; ?></strong></td></tr>
+                    <tr><td width="25%">TOKO :</td><td><strong><?php echo isset($dataBranch['name']) ? $dataBranch['name'] : '-'; ?></strong></td></tr>
                     <tr><td></td><td><?php echo isset($dataBranch['address']) ? nl2br(trim($dataBranch['address'])) : '-'; ?></td></tr>
-                    <tr><td><br>SHIP TO:</td><td><br><?php echo isset($dataPO['toAddress']) ? $dataPO['toAddress'] : '-'; ?></td></tr>
+                    <tr><td><br>SHIP TO :</td><td><br><?php echo isset($dataPO['toAddress']) ? $dataPO['toAddress'] : '-'; ?></td></tr>
                     <?php if (isset($dataPO['shipment']['name'])) : ?>
                     <tr>
-                        <td><br>EKSPEDISI:</td>
-                        <td><br><strong><?php echo $dataPO['shipment']['name']; ?></strong><br><?php echo isset($dataPO['shipment']['shipAddress']) ? nl2br($dataPO['shipment']['shipAddress']) : ''; ?></td>
+                        <td><br>EKSPEDISI :</td>
+                        <td>
+                            <br>
+                            <strong><?php echo isset($dataPO['shipment']['name']) ? $dataPO['shipment']['name'] : '-'; ?></strong>
+                        </td>
                     </tr>
                     <?php endif; ?>
                 </table>

@@ -179,7 +179,7 @@ function bar128($text) {
     </table>
     <!-- DETAIL BARANG PO -->
     <table class="table-item" style="margin-top:10px;">
-        <tr style="background-color:#eee; font-weight:bold; text-align:center;">
+        <tr style= font-weight:bold; text-align:center;">
             <th width="5%" class="line-bottom">NO.</th>
             <th width="45%" class="line-bottom" align="left">NAMA BARANG</th>
             <th width="15%" class="line-bottom">SITE</th>

@@ -206,12 +206,13 @@ function bar128($text) {
         ?>
         <tr>
             <td colspan="3" class="line-bottom"></td>
-            <td align="center" style="font-weight:bold;" class="line-bottom"><?php echo number_format($totalQty, 0); ?></td>
+            <td align="center" style="font-weight:bold;" class="line-bottom"><?php echo "TOTAL QTY: " . number_format($totalQty, 0); ?></td>
             <td class="line-bottom"></td>
         </tr>
     </table>
     <!-- DETAIL BARANG PO -->
-
+    
+    <!-- FOOTER GRUP  -->
     <table style="margin-top:15px;">
         <tr><td colspan="4">KET: <?php echo isset($dataPO['description']) ? $dataPO['description'] : '-'; ?></td></tr>
         <tr style="text-align:center;">
@@ -229,6 +230,8 @@ function bar128($text) {
             <td colspan="2"></td>
         </tr>
     </table>
+    <!-- FOOTER GRUP  -->
+
 
     <div style="border: 2px solid black; padding:8px; margin-top:15px; font-weight:bold;">
         PERHATIAN: Setelah barang dikirim, Supplier wajib mengambil SPB (Surat Penerimaan Barang), KECUALI Supplier Luar Kota

@@ -94,13 +94,17 @@ function bar128($text) {
             <td width="100">Tanggal Exp :</td>
         </tr>
         <tr>
-            <td><?php echo isset($dataPO['transDate']) ? $dataPO['transDate'] : '-'; ?></td>
-            <td><?php echo isset($dataPO['shipDateView']) ? $dataPO['shipDateView'] : '-'; ?></td>
+            <td valign="top"><?php echo isset($dataPO['transDateView']) ? $dataPO['transDateView'] : '-'; ?></td>
+            <td valign="top"><?php echo isset($dataPO['shipDateView']) ? $dataPO['shipDateView'] : '-'; ?></td>
             <td>
                 <?php 
                 if (isset($dataPO['transDate']) && isset($dataPO['autoCloseRange'])) {
                     $poDate = str_replace('/', '-', $dataPO['transDate']);
-                    echo date('d-M-Y', strtotime($poDate . " + ".intval($dataPO['autoCloseRange'])." days"));
+                    $days = intval($dataPO['autoCloseRange']);
+                    
+                    // Format: Tgl Bulan Tahun (Jumlah Hari)
+                    echo date('d M Y', strtotime($poDate . " + " . $days . " days"));
+                    echo "<br>(" . $days . " Hari)";
                 }
                 ?>
             </td>
@@ -117,7 +121,7 @@ function bar128($text) {
         </tr>
     </table>
 
-    <table style="border: 2px solid black; margin-top:10px;">
+    <table style="border: 1px solid black; margin-top:10px;">
         <tr>
             <td width="50%" valign="top" style="border-right: 2px solid black; padding:8px;">
                 <table width="100%">
@@ -159,7 +163,7 @@ function bar128($text) {
                             </strong>
                         </td>
                     </tr>
-                    <tr><td><br>SHIP TO :</td><td><br><?php echo isset($dataPO['toAddress']) ? $dataPO['toAddress'] : '-'; ?></td></tr>
+                    <tr><td>SHIP TO :</td><td><br><?php echo isset($dataPO['toAddress']) ? $dataPO['toAddress'] : '-'; ?></td></tr>
                     <?php if (isset($dataPO['shipment']['name'])) : ?>
                     <tr>
                         <td><br>EKSPEDISI :</td>

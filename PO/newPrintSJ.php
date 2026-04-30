@@ -218,8 +218,22 @@ function bar128($text) {
         <tr style="text-align:center;">
             <td width="25%" style="padding-top:20px;">Mengetahui</td>
             <td width="25%">&nbsp;</td>
-            <td width="25%" style="padding-top:20px;">TIME: <?php echo date("H:i:s"); ?></td>
-            <td width="25%" style="padding-top:20px;">USER: <?php echo isset($dataPO['createdBy']) ? $dataPO['createdBy'] : '-'; ?></td>
+            <td width="25%" style="padding-top:20px;">DATETIME: <?php echo date("d M Y H:i"); ?></td>
+            <td width="25%" style="padding-top:20px;">
+                USER: 
+                <?php 
+                    $createdBy = isset($dataPO['createdBy']) ? $dataPO['createdBy'] : '-';
+                    $printUser = isset($dataPO['printUserName']) ? $dataPO['printUserName'] : '';
+
+                    // Jika printUserName kosong atau berisi teks "Belum cetak/email"
+                    if ($printUser == '' || $printUser == 'Belum cetak/email') {
+                        echo $createdBy;
+                    } else {
+                        // Selain itu, tampilkan format: printUserName / createdBy
+                        echo $printUser . ' / ' . $createdBy;
+                    }
+                ?>
+            </td>
         </tr>
         <tr style="text-align:center; font-weight:bold;">
             <td>Buyer</td><td>Admin Buyer</td><td colspan="2"></td>

@@ -140,8 +140,25 @@ function bar128($text) {
             </td>
             <td width="50%" valign="top" style="padding:8px;">
                 <table width="100%">
-                    <tr><td width="25%">TOKO :</td><td><strong><?php echo isset($dataBranch['name']) ? $dataBranch['name'] : '-'; ?></strong></td></tr>
-                    <tr><td></td><td><?php echo isset($dataBranch['address']) ? nl2br(trim($dataBranch['address'])) : '-'; ?></td></tr>
+                    <tr>
+                        <td width="25%">TOKO :</td>
+                        <td>
+                            <strong>
+                                <?php 
+                                $street = isset($dataBranch['street']) ? trim($dataBranch['street']) : '';
+                                $name   = isset($dataBranch['name']) ? trim($dataBranch['name']) : '';
+
+                                if ($street !== '' && $name !== '') {
+                                    echo $street . ' - ' . $name;
+                                } elseif ($street !== '' || $name !== '') {
+                                    echo $street . $name;
+                                } else {
+                                    echo '-';
+                                }
+                                ?>
+                            </strong>
+                        </td>
+                    </tr>
                     <tr><td><br>SHIP TO :</td><td><br><?php echo isset($dataPO['toAddress']) ? $dataPO['toAddress'] : '-'; ?></td></tr>
                     <?php if (isset($dataPO['shipment']['name'])) : ?>
                     <tr>

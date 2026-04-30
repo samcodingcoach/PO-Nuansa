@@ -122,7 +122,18 @@ function bar128($text) {
             <td width="50%" valign="top" style="border-right: 2px solid black; padding:8px;">
                 <table width="100%">
                     <tr><td width="30%">SUPPLIER:</td><td><strong><?php echo isset($dataPO['vendor']['name']) ? $dataPO['vendor']['name'] : '-'; ?></strong></td></tr>
-                    <tr><td></td><td><?php echo isset($dataVendor['taxStreet']) ? $dataVendor['taxStreet'] : '-'; ?></td></tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <?php 
+                            $output = trim((isset($dataVendor['billCity']) ? $dataVendor['billCity'] : '') . 
+                                    ($dataVendor['billCity'] && $dataVendor['billProvince'] ? ' - ' : '') . 
+                                    (isset($dataVendor['billProvince']) ? $dataVendor['billProvince'] : ''));
+                            
+                            echo ($output !== '') ? $output : '-';
+                            ?>
+                        </td>
+                    </tr>
                     <tr><td>TELEPON:</td><td><?php echo isset($dataVendor['mobilePhone']) ? $dataVendor['mobilePhone'] : '-'; ?></td></tr>
                     <tr><td>CONTACT:</td><td><?php echo isset($dataVendor['detailContact'][0]['name']) ? $dataVendor['detailContact'][0]['name'] : '-'; ?></td></tr>
                 </table>
@@ -142,13 +153,13 @@ function bar128($text) {
             </td>
         </tr>
     </table>
-
+    <!-- DETAIL BARANG PO -->
     <table class="table-item" style="margin-top:10px;">
         <tr style="background-color:#eee; font-weight:bold; text-align:center;">
             <th width="5%" class="line-bottom">NO.</th>
             <th width="45%" class="line-bottom" align="left">NAMA BARANG</th>
             <th width="15%" class="line-bottom">SITE</th>
-            <th width="10%" class="line-bottom">Q</th>
+            <th width="10%" class="line-bottom">QTY</th>
             <th width="25%" class="line-bottom">BARCODE</th>
         </tr>
         <?php 
@@ -179,6 +190,7 @@ function bar128($text) {
             <td class="line-bottom"></td>
         </tr>
     </table>
+    <!-- DETAIL BARANG PO -->
 
     <table style="margin-top:15px;">
         <tr><td colspan="4">KET: <?php echo isset($dataPO['description']) ? $dataPO['description'] : '-'; ?></td></tr>

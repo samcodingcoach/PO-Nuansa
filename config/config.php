@@ -1,7 +1,7 @@
 <?php
 /**
  * Konfigurasi terpusat untuk aplikasi Accurate API
- * Versi Kompatibel: PHP 5.6
+ * File ini berisi semua konfigurasi yang dibutuhkan aplikasi
  */
 
 // Konfigurasi OAuth
@@ -12,9 +12,9 @@ define('OAUTH_REDIRECT_URI', 'https://perdurably-defunctive-gauge.ngrok-free.dev
 // Konfigurasi API Accurate
 define('ACCURATE_API_HOST', 'https://odin.accurate.id');
 define('ACCURATE_AUTH_HOST', 'https://account.accurate.id');
-define('ACCURATE_ACCESS_TOKEN', 'ab12da57-d5b8-4fc8-aff9-fecf102dc660');
-define('ACCURATE_TOKEN_SCOPE', 'item_view branch_view item_category_view vendor_view warehouse_view purchase_order_view');
-define('ACCURATE_REFRESH_TOKEN', 'e5552c1c-0b43-45d2-b1e5-227c3c6e10f3');
+define('ACCURATE_ACCESS_TOKEN', '2002c1f9-2054-4d80-8395-31182162def6');
+define('ACCURATE_TOKEN_SCOPE', 'item_view branch_view item_category_view vendor_view sales_order_delete warehouse_view sales_order_view sales_receipt_view purchase_order_view sales_order_save glaccount_view customer_view');
+define('ACCURATE_REFRESH_TOKEN', 'bf088391-06d1-4eb2-852d-a677d05d6d9e');
 define('ACCURATE_SESSION_ID', 'caeb5402-fb11-44cd-99c2-678304cf2a2a');
 define('ACCURATE_DATABASE_ID', '2546462');
 
@@ -26,10 +26,7 @@ define('DEFAULT_TIMEZONE', 'Asia/Jakarta');
 // Set timezone default
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
-/**
- * Konfigurasi error reporting untuk development di PHP 5.6
- * Pastikan display_errors tetap 1 selama masa transisi 2 folder XAMPP
- */
+// Konfigurasi error reporting untuk development
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
